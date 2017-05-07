@@ -2,7 +2,7 @@ import scrapy
 from frosch.items import com, dep
 
 class frosch(scrapy.Spider):
-    name = 'frosch'
+    name = 'communes'
     allowed_domains = ['http://elections.interieur.gouv.fr/']
     start_urls = [
         'http://elections.interieur.gouv.fr/presidentielle-2017/',
@@ -11,18 +11,18 @@ class frosch(scrapy.Spider):
     def start_requests(self):
 
         for baseurl in self.start_urls:
-            yield scrapy.Request(baseurl, callback=self.region_links)
+            yield scrapy.Request(baseurl, callback=self.dep_links)
 
 
-    def region_links(self, response):
+    def dep_links(self, response):
 
         for regionURL in response.xpath("//*[@id='listeDpt']/option/@value").extract():
             if regionURL != "#":
                 url = response.url + regionURL
-                yield scrapy.Request(url, callback=self.sub_region_links, dont_filter=True)
+                yield scrapy.Request(url, callback=self.dep, dont_filter=True)
 
 
-    def sub_region_links(self, response):
+    def dep(self, response):
 
         departement = dep()
         sel = response.selector
@@ -40,7 +40,7 @@ class frosch(scrapy.Spider):
         for sub_regionURL in response.xpath('//div[@class="row-fluid pub-index-communes"]//a/@href').extract():
             scrapeURL = sub_regionURL.replace("../../", "")
             url =  baseurl + scrapeURL
-            yield scrapy.Request(url, callback=self.commune_links, dont_filter=False)
+            yield scrapy.Request(url, callback=self.commune_links, dont_filter=True)
 
         #self.logger.info('A response from %s just arrived!', response.url)
 
