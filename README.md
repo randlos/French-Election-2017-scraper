@@ -1,5 +1,5 @@
 # French Election 2017 scraper
-## It's a scrapy scraper to get every Vote for every department and commune for every contender of the french election 2017
+## It's a scrapy scraper to get every Vote for every department and commune for every contender of the french election 2017 from http://elections.interieur.gouv.fr/
 ### Note
 This repo is from a guy who’s nether talented nor expierenced. So don’t expect the snippets to be optimized or good enough.
 ### Requirement
