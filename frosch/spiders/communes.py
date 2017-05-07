@@ -1,5 +1,6 @@
 import scrapy
 from frosch.items import com, dep
+from geopy.geocoders import Nominatim
 
 class frosch(scrapy.Spider):
     name = 'communes'
@@ -24,15 +25,6 @@ class frosch(scrapy.Spider):
 
     def dep(self, response):
 
-        departement = dep()
-        sel = response.selector
-
-        dep_str = response.xpath('//*[@id="top"]/div[2]/div[1]/div[2]/div/a[3]/text()').extract_first()
-        departement['departement'] = dep_str[:-5]
-        for tr in sel.xpath("//table[contains(@class, 'tableau-resultats-listes-ER')]/tbody/tr"):
-            departement['kandidat'] = tr.xpath('td[1]/text()').extract_first()
-            departement['stimmen'] = tr.xpath('td[2]/text()').extract_first()
-            yield departement
 
         for url in self.start_urls:
             baseurl = url
@@ -62,7 +54,15 @@ class frosch(scrapy.Spider):
         sel = response.selector
 
         commune['commune'] = response.xpath('//*[@id="top"]/div[2]/div[1]/div[4]/div/h3[1]/text()').extract_first()
+
+        geolocator = Nominatim()
+        adress = commune['commune'] + ', FR'
+        location = geolocator.geocode(adress)
+        commune['location'] = location.latitude, location.longitude
+
         for tr in sel.xpath("//table[contains(@class, 'tableau-resultats-listes-ER')]/tbody/tr"):
             commune['kandidat'] = tr.xpath('td[1]/text()').extract_first()
             commune['stimmen'] = tr.xpath('td[2]/text()').extract_first()
+            prozent = tr.xpath('td[4]/text()').extract_first()
+            commune['prozent'] = prozent.strip()
             yield commune

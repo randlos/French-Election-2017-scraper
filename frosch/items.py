@@ -12,11 +12,15 @@ class com(scrapy.Item):
     commune = scrapy.Field()
     kandidat = scrapy.Field()
     stimmen = scrapy.Field()
+    prozent = scrapy.Field()
+    location = scrapy.Field()
     pass
 
 class dep(scrapy.Item):
     departement = scrapy.Field()
     kandidat = scrapy.Field()
     stimmen = scrapy.Field()
+    prozent = scrapy.Field()
+    location = scrapy.Field()
     pass
 
